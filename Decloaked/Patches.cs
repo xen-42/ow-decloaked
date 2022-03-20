@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Decloaked
+﻿namespace Decloaked
 {
     public static class Patches
     {
@@ -16,7 +10,6 @@ namespace Decloaked
             harmony.AddPostfix<ReferenceFrame>(nameof(ReferenceFrame.GetHUDDisplayName), typeof(Patches), nameof(Patches.GetHUDDisplayName));
 
             // CloakingFieldProxy needs a lot of work
-            //harmony.AddPrefix<CloakingFieldProxy>(nameof(CloakingFieldProxy.OnPlayerEnterCloakingField), typeof(Patches), nameof(Patches.OnPlayerEnterCloakingField));
             harmony.AddPrefix<CloakingFieldProxy>(nameof(CloakingFieldProxy.OnPlayerExitCloakingField), typeof(Patches), nameof(Patches.OnPlayerExitCloakingField));
             harmony.AddPrefix<CloakingFieldProxy>(nameof(CloakingFieldProxy.OnEnterDreamWorld), typeof(Patches), nameof(Patches.OnEnterDreamWorld));
             harmony.AddPrefix<CloakingFieldProxy>(nameof(CloakingFieldProxy.OnExitDreamWorld), typeof(Patches), nameof(Patches.OnExitDreamWorld));
@@ -24,29 +17,29 @@ namespace Decloaked
             harmony.AddPrefix<CloakingFieldProxy>(nameof(CloakingFieldProxy.ShouldBeHidden), typeof(Patches), nameof(Patches.ShouldBeHidden));
         }
 
+        #region MapController
         public static void OnTargetReferenceFrame(MapController __instance, ReferenceFrame __0)
         {
-            // So that it'll follow it up
-            if (__0.GetAstroObject().GetAstroObjectName() == AstroObject.Name.RingWorld)
+            // So that it'll lock on off the plane
+            if (__0?.GetAstroObject()?.GetAstroObjectName() == AstroObject.Name.RingWorld)
             {
                 __instance._isLockedOntoMapSatellite = true;
             }
         }
+        #endregion MapController
 
+        #region ReferenceFrame
         public static void GetHUDDisplayName(ReferenceFrame __instance, ref string __result)
         {
-            if (__instance.GetAstroObject().GetAstroObjectName() == AstroObject.Name.RingWorld)
+            // For when we lock on
+            if (__instance?.GetAstroObject()?.GetAstroObjectName() == AstroObject.Name.RingWorld)
             {
                 __result = UITextLibrary.GetString(UITextType.LocationIP);
             }
         }
+        #endregion ReferenceFrame
 
         #region CloakingFieldProxy
-        public static bool OnPlayerEnterCloakingField()
-        {
-            return false;
-        }
-
         public static bool OnPlayerExitCloakingField()
         {
             return false;
