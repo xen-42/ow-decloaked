@@ -84,6 +84,11 @@ namespace Decloaked
             PlayerData.SetPersistentCondition("MARK_ON_HUD_TUTORIAL_COMPLETE", true);
             PlayerData.SetPersistentCondition("COMPLETED_SHIPLOG_TUTORIAL", true);
             #endregion PersistentCondition
+
+            foreach (var shipLogEntryLocation in GameObject.Find("RingWorld_Body").GetComponentsInChildren<ShipLogEntryLocation>())
+            {
+                shipLogEntryLocation._isWithinCloakField = false;
+            }
         }
     }
 }
