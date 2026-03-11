@@ -1,4 +1,5 @@
-﻿using OWML.ModHelper;
+﻿using NewHorizons;
+using OWML.ModHelper;
 using System;
 using UnityEngine;
 
@@ -8,9 +9,17 @@ namespace Decloaked
     {
         public static Decloaked Instance;
 
+        private INewHorizons _newHorizons = null;
+
         private void Start()
         {
             Instance = this;
+
+            // If NH is installed we use the API to check it and see if we are in the right solar system
+            if (Instance.ModHelper.Interaction.ModExists("xen.NewHorizons"))
+            {
+                _newHorizons = Instance.ModHelper.Interaction.GetModApi<INewHorizons>("xen.NewHorizons");
+            }
 
             LoadManager.OnCompleteSceneLoad += OnCompleteSceneLoad;
 
@@ -20,6 +29,9 @@ namespace Decloaked
         private void OnCompleteSceneLoad(OWScene scene, OWScene loadScene)
         {
             if (loadScene != OWScene.SolarSystem) return;
+
+            // If this code runs in other systems, on return to the Outer Wilds we get stuck in the loading screen for some reason
+            if (_newHorizons != null && _newHorizons.GetCurrentStarSystem() != "SolarSystem") return;
 
             #region Cloak
             var cloak = GameObject.Find("RingWorld_Body").GetComponentInChildren<CloakFieldController>();
